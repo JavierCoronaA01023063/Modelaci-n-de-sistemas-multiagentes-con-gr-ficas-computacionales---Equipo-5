@@ -9,24 +9,28 @@ def agent_portrayal(agent):
     if agent is None:
         return
 
-    portrayal = {"Filled": "true"}
+    portrayal = {"Shape": "circle",
+                 "Filled": "true",
+                 "Layer": 1,
+                 "Color": "grey",
+                 "r": 0.5}
 
     if isinstance(agent, OrganizingAgent):
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "Green"
-        portrayal["Layer"] = 50
+        portrayal["Layer"] = 1
         portrayal["r"] = 0.5
 
     if isinstance(agent, BoxAgent):
-        portrayal["Shape"] = "rect"
+        portrayal["Shape"] = "circle"
         portrayal["Color"] = "Brown"
-        portrayal["Layer"] = 0
+        portrayal["Layer"] = 1
 
     return portrayal
 
 
-model_params = {"N": UserSettableParameter("slider", "Number of Agents", 5, 1, 10, 1), "box": UserSettableParameter(
-    "slider", "Number of Boxes", 10, 1, 20, 1), "max_time": UserSettableParameter("slider", "Max Time", 200, 1, 400, 1), "width": 10, "height": 10}
+model_params = {"N": UserSettableParameter("slider", "Number of Agents", 1, 1, 10, 1), "box": UserSettableParameter(
+    "slider", "Number of Boxes", 5, 1, 20, 1), "max_time": UserSettableParameter("slider", "Max Time", 200, 1, 400, 1), "width": 10, "height": 10}
 
 grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
 server = ModularServer(
