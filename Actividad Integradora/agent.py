@@ -89,19 +89,19 @@ class OrganizingAgent(Agent):
         current_pos_y = self.pos[1]
 
         distances = []
-
-        distances.append(sqrt((current_pos_x - home_x) **
-                              2 + (current_pos_y + 1 - home_y) ** 2))
         distances.append(sqrt(((current_pos_x - 1) - home_x)
-                              ** 2 + (current_pos_y - home_y) ** 2))
-        distances.append(sqrt(((current_pos_x + 1) - home_x)
                               ** 2 + (current_pos_y - home_y) ** 2))
         distances.append(sqrt((current_pos_x - home_x) **
                               2 + (current_pos_y - 1 - home_y) ** 2))
+        distances.append(sqrt((current_pos_x - home_x) **
+                              2 + (current_pos_y + 1 - home_y) ** 2))
+        distances.append(sqrt(((current_pos_x + 1) - home_x)
+                              ** 2 + (current_pos_y - home_y) ** 2))
 
         min_index = 0
         min_value = 1000
         for distance in range(len(distances)):
+            print(distances)
             if distances[distance] < min_value and self.freeSpaces[distance] == 2:
                 min_value = distances[distance]
                 min_index = distance

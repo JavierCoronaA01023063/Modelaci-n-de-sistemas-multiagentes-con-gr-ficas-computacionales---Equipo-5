@@ -4,6 +4,8 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.ModularVisualization import VisualizationElement
 
+COLORS = {"Moving": "#ffd966", "Box": "#744700", "Delivered": "Green"}
+
 
 def agent_portrayal(agent):
     if agent is None:
@@ -17,13 +19,13 @@ def agent_portrayal(agent):
 
     if isinstance(agent, OrganizingAgent):
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "Green"
+        portrayal["Color"] = "Red"
         portrayal["Layer"] = 1
         portrayal["r"] = 0.5
 
     if isinstance(agent, BoxAgent):
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "Brown"
+        portrayal["Color"] = COLORS[agent.condition]
         portrayal["Layer"] = 1
 
     return portrayal

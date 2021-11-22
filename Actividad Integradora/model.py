@@ -7,9 +7,8 @@ from agent import OrganizingAgent, ObstacleAgent, BoxAgent
 
 class StorageModel(Model):
 
-    def __init__(self, N, box, max_time, width, height, density=0.6):
+    def __init__(self, N, box, width, height, density=0.6):
         self.n_agents = N
-        self.max_time = max_time
         self.num_box = box
         self.number_of_moves = 0
         self.grid = MultiGrid(width, height, torus=False)
@@ -59,10 +58,9 @@ class StorageModel(Model):
         """
         Advanced the model by one step
         """
-        if self.count_type(self, "Box") == 0 or self.max_time <= 0:
+        if self.count_type(self, "Delivered") == self.num_box:
             self.running = False
 
-        self.max_time -= 1
         self.schedule.step()
 
     @staticmethod
