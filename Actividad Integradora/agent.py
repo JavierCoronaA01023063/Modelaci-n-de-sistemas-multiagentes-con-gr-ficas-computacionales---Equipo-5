@@ -107,6 +107,7 @@ class OrganizingAgent(Agent):
                 min_index = distance
 
         self.model.grid.move_agent(self, self.possible_steps[min_index])
+        self.move_count += 1
         self.model.grid.move_agent(
             self.carried_box, self.possible_steps[min_index])
         self.pos = self.possible_steps[min_index]
@@ -116,6 +117,7 @@ class OrganizingAgent(Agent):
         if self.freeSpaces[self.direction] == 2:
             self.model.grid.move_agent(
                 self, self.possible_steps[self.direction])
+            self.move_count += 1
         else:
             print(f"Agent {self.unique_id} no se movió")
 

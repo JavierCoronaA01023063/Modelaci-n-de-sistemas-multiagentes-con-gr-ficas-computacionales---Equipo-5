@@ -7,10 +7,11 @@ from agent import OrganizingAgent, ObstacleAgent, BoxAgent
 
 class StorageModel(Model):
 
-    def __init__(self, N, box, width, height, density=0.6):
+    def __init__(self, N, box, max_time, width, height, density=0.6):
         self.n_agents = N
         self.num_box = box
         self.number_of_moves = 0
+        self.max_time = max_time
         self.grid = MultiGrid(width, height, torus=False)
         self.schedule = RandomActivation(self)
         self.running = True
