@@ -21,21 +21,38 @@ public class AgentController : MonoBehaviour
     [SerializeField] int height;
     [SerializeField] private GameObject organizingAgentPrefab;
     [SerializeField] private GameObject boxAgentPrefab;
-    [SerializeField] private float updateDealy;
+    [SerializeField] private float timeToUpdate;
     [SerializeField] GameObject floor;
 
     Agents oAgents, bAgents;
     GameObject[] organizingAgents, boxAgents;
     private float updateTime = 0;
+    
+    List<Vector3> oldPosOrg;
+    List<Vector3> newPosOrg;
+    List<Vector3> oldPosBox;
+    List<Vector3> newPosBox;
+    
+    float timer, dt;
+    
+    // Pause the simulation while we get the update from the server
+    bool hold = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        oldPosOrg = new List<Vector3>();
+        newPosOrg = new List<Vector3>();
+        oldPosBox = new List<Vector3>();
+        newPosBox = new List<Vector3>();
+        
         organizingAgents = new GameObject[numAgents];
         boxAgents = new GameObject[numBoxes];
 
         floor.transform.localScale = new Vector3((float) width / 10, 1, (float) height / 10);
         floor.transform.localPosition = new Vector3((float) width / 2 - 0.5f, 0, (float) height / 2 - 0.5f);
+
+        timer = timeToUpdate;
         
         for (int i = 0; i < numAgents; i++)
         {
@@ -53,14 +70,24 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (updateTime > updateDealy)
-        {
-            StartCoroutine(UpdateSimulation());
-            //MoveAgents();
-            updateTime = 0;
-        }
+        float t = timer / timeToUpdate;
 
-        updateTime += Time.deltaTime;
+        dt = t * t * (3f - 2f * t);
+        
+        if(timer >= timeToUpdate)
+        {
+            timer = 0;
+            hold = true;
+            StartCoroutine(UpdateSimulation());
+        }
+        
+        if (!hold)
+        {
+            MoveOrganizingAgents();
+            MoveBoxAgent();
+            // Move time from the last frame
+            timer += Time.deltaTime;
+        }
     }
 
     IEnumerator TestAPI()
@@ -124,7 +151,15 @@ public class AgentController : MonoBehaviour
         else 
         { 
             oAgents = JsonUtility.FromJson<Agents>(www.downloadHandler.text);
-            MoveOrganizingAgents();
+            
+            oldPosOrg = new List<Vector3>(newPosOrg);
+
+            newPosOrg.Clear();
+
+            foreach(Vector3 v in oAgents.positions)
+                newPosOrg.Add(v);
+
+            hold = false;
         }
     }
     
@@ -138,7 +173,15 @@ public class AgentController : MonoBehaviour
         else 
         {
             bAgents = JsonUtility.FromJson<Agents>(www.downloadHandler.text);
-            MoveBoxAgent();
+            
+            oldPosBox = new List<Vector3>(newPosBox);
+
+            newPosBox.Clear();
+
+            foreach(Vector3 v in bAgents.positions)
+                newPosBox.Add(v);
+
+            hold = false;
         }
     }
 
@@ -146,7 +189,11 @@ public class AgentController : MonoBehaviour
     {
         for (int i = 0; i < numAgents; i++)
         {
-            organizingAgents[i].transform.position = oAgents.positions[i];
+            Vector3 interpolated = Vector3.Lerp(oldPosOrg[i], newPosOrg[i], dt);
+            organizingAgents[i].transform.localPosition = interpolated;
+                
+            Vector3 dir = oldPosOrg[i] - newPosOrg[i];
+            organizingAgents[i].transform.rotation = Quaternion.LookRotation(dir);
         }
     }
 
@@ -154,7 +201,11 @@ public class AgentController : MonoBehaviour
     {
         for (int i = 0; i < numBoxes; i++)
         {
-            boxAgents[i].transform.position = bAgents.positions[i];
+            Vector3 interpolated = Vector3.Lerp(oldPosBox[i], newPosBox[i], dt);
+            boxAgents[i].transform.localPosition = interpolated;
+                
+            Vector3 dir = oldPosBox[i] - newPosBox[i];
+            boxAgents[i].transform.rotation = Quaternion.LookRotation(dir);
         }
     }
 }
