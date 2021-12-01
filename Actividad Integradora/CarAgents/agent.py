@@ -59,7 +59,7 @@ def algorithm(self, start, goal, h):
 
         # Checks which grid cells are empty
         # Open a list of empty spaces
-        self.getFreeSpaces()
+        self.getFreeSpaces(current)
 
         self.next_moves = [p for p, f in zip(
             self.possible_steps, self.freeSpaces) if f == True]
@@ -107,9 +107,9 @@ class Car(Agent):
             model: Model reference for the agent
         """
         super().__init__(unique_id, model)
+        self.pos = startPos
         self.destination = destination
         self.condition = "Driving"
-        self.previousPos = self.pos
         self.steps_taken = 1
         self.stepsWaited = 0
         self.freeSpaces = []
@@ -140,41 +140,49 @@ class Car(Agent):
                 self.downIndexes.append(counter)
             counter += 1
 
-    def getFreeSpaces(self):
+    def getFreeSpaces(self, pos):
         self.freeSpaces = []
         currentIndex = 0
         for step in self.possible_steps:
-            if step != self.previousPos:
-                content = self.model.grid.get_cell_list_contents(step)[0]
-                if isinstance(content, Road):
-                    if not content.twoWay:
-                        if content.direction == "Up" and currentIndex in self.upIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction == "Down" and currentIndex in self.downIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction == "Left" and currentIndex in self.leftIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction == "Right" and currentIndex in self.rightIndexes:
-                            self.freeSpaces.append(True)
-                        else:
-                            self.freeSpaces.append(False)
+            content = self.model.grid.get_cell_list_contents(step)[0]
+            if isinstance(content, Road):
+                if not content.twoWay:
+                    if content.direction == "Up" and currentIndex in self.upIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction == "Down" and currentIndex in self.downIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction == "Left" and currentIndex in self.leftIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction == "Right" and currentIndex in self.rightIndexes:
+                        self.freeSpaces.append(True)
                     else:
-                        if content.direction[0] == "Up" and currentIndex in self.upIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction[0] == "Down" and currentIndex in self.downIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction[1] == "Left" and currentIndex in self.leftIndexes:
-                            self.freeSpaces.append(True)
-                        elif content.direction[1] == "Right" and currentIndex in self.rightIndexes:
-                            self.freeSpaces.append(True)
-                        else:
-                            self.freeSpaces.append(False)
-                elif isinstance(content, Destination) and content.pos == self.destination or isinstance(content, Traffic_Light):
+                        self.freeSpaces.append(False)
+                else:
+                    if content.direction[0] == "Up" and currentIndex in self.upIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction[0] == "Down" and currentIndex in self.downIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction[1] == "Left" and currentIndex in self.leftIndexes:
+                        self.freeSpaces.append(True)
+                    elif content.direction[1] == "Right" and currentIndex in self.rightIndexes:
+                        self.freeSpaces.append(True)
+                    else:
+                        self.freeSpaces.append(False)
+            elif isinstance(content, Traffic_Light):
+                if content.direction == "Up" and currentIndex in self.upIndexes:
+                    self.freeSpaces.append(True)
+                elif content.direction == "Down" and currentIndex in self.downIndexes:
+                    self.freeSpaces.append(True)
+                elif content.direction == "Left" and currentIndex in self.leftIndexes:
+                    self.freeSpaces.append(True)
+                elif content.direction == "Right" and currentIndex in self.rightIndexes:
                     self.freeSpaces.append(True)
                 else:
                     self.freeSpaces.append(False)
+
+            elif isinstance(content, Destination) and content.pos == self.destination:
+                self.freeSpaces.append(True)
             else:
-                print("Step was the same as prev pos", step, self.previousPos)
                 self.freeSpaces.append(False)
             currentIndex += 1
 
@@ -237,11 +245,12 @@ class Traffic_Light(Agent):
     Obstacle agent. Just to add obstacles to the grid.
     """
 
-    def __init__(self, unique_id, model, state=False, timeToChange=10):
+    def __init__(self, unique_id, model, direction, state=False, timeToChange=10):
         super().__init__(unique_id, model)
         self.state = state
         self.timeToChange = timeToChange
         self.condition = ""
+        self.direction = direction
 
     def step(self):
         # if self.model.schedule.steps % self.timeToChange == 0:
