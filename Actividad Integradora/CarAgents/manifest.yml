@@ -1,0 +1,7 @@
+applications:
+- name: RetoMovilidadUrbana
+  random-route: true
+  memory: 128M
+  env: 
+    CF_SETUP_TIMEOUT: 45
+    CF_START_TIMEOUT: 45

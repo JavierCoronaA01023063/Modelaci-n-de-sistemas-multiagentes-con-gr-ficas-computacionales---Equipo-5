@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from model import *
+import os
 
 
 app = Flask("Test server")
@@ -65,4 +66,5 @@ def updateModel():
     return jsonify({'message': f'Model updated to step {currentStep}.', 'currentStep': currentStep})
 
 
-app.run()
+port = int(os.environ.get("PORT", 8000))
+app.run(host='0.0.0.0', port=port, debug=True)
