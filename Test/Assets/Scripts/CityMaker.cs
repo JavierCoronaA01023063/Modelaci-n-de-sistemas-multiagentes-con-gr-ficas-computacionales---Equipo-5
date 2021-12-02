@@ -10,16 +10,12 @@ public class CityMaker : MonoBehaviour
     [SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
+    public List<GameObject> trafficLights;
+
     // Start is called before the first frame update
     void Start()
     {
         MakeTiles(layout.text);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     void MakeTiles(string tiles)
@@ -51,6 +47,7 @@ public class CityMaker : MonoBehaviour
                 tile = Instantiate(roadPrefab, position, Quaternion.identity);
                 tile.transform.parent = transform;
                 tile = Instantiate(semaphorePrefab, position, Quaternion.identity);
+                trafficLights.Add(tile);
                 tile.transform.parent = transform;
                 x += 1;
             } else if (tiles[i] == 'S') {
@@ -58,6 +55,7 @@ public class CityMaker : MonoBehaviour
                 tile = Instantiate(roadPrefab, position, Quaternion.Euler(0, 90, 0));
                 tile.transform.parent = transform;
                 tile = Instantiate(semaphorePrefab, position, Quaternion.Euler(0, 90, 0));
+                trafficLights.Add(tile);
                 tile.transform.parent = transform;
                 x += 1;
             } else if (tiles[i] == 'D') {

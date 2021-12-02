@@ -7,6 +7,11 @@ public class CarAgents
 {
     public List<Vector3> positions;
 }
+
+public class TrafficLights
+{
+    public List<bool> states;
+}
 public class CarAgentController : MonoBehaviour
 {
      [SerializeField] string url;
@@ -14,15 +19,16 @@ public class CarAgentController : MonoBehaviour
      [SerializeField] string configEP;
      [SerializeField] private string updateEP;
      [SerializeField] private string updateCarAgentsEP;
-//     // [SerializeField] private string updateBoxAgentsEP;
+     [SerializeField] private string updateTrafficLightsEP;
      [SerializeField] int numAgents;
-//     // [SerializeField] int numBoxes;
      [SerializeField] private GameObject carAgentPrefab;
-     [SerializeField] private GameObject trafficLightAgentPrefab;
      [SerializeField] private float timeToUpdate;
      
      CarAgents Agents;
+     TrafficLights TrafficLightsStates;
      GameObject[] carAgents;
+
+     List<GameObject> trafficLights;
 
      List<Vector3> oldPos;
      List<Vector3> newPos;
@@ -38,9 +44,13 @@ public class CarAgentController : MonoBehaviour
      {
          oldPos = new List<Vector3>();
          newPos = new List<Vector3>();
-
+         
+         GameObject city = GameObject.Find("City");
+         CityMaker cityMakerScript = city.GetComponent<CityMaker>();
+         
+         trafficLights = cityMakerScript.trafficLights;
          carAgents = new GameObject[numAgents];
-
+     
          timer = timeToUpdate;
          
          for (int i = 0; i < numAgents; i++)
@@ -68,6 +78,7 @@ public class CarAgentController : MonoBehaviour
          
              if (!hold)
              {
+                 ChangeTrafficLightColor();
                  MoveCarAgents();
                  // Move time from the last frame
                  timer += Time.deltaTime;
@@ -102,6 +113,7 @@ public class CarAgentController : MonoBehaviour
          if (www.result == UnityWebRequest.Result.Success)
          {
              StartCoroutine(GetCarData());
+             StartCoroutine(GetTrafficLightState());
              Debug.Log(www.downloadHandler.text);
          }
          else
@@ -122,6 +134,7 @@ public class CarAgentController : MonoBehaviour
          else
          {
              StartCoroutine(GetCarData());
+             StartCoroutine(GetTrafficLightState());
          }
      }
 
@@ -150,6 +163,22 @@ public class CarAgentController : MonoBehaviour
              hold = false;
          }
      }
+     
+     IEnumerator GetTrafficLightState()
+     {
+         UnityWebRequest www = UnityWebRequest.Get(url + updateTrafficLightsEP);
+         yield return www.SendWebRequest();
+  
+         if (www.result != UnityWebRequest.Result.Success)
+             Debug.Log(www.error);
+         else 
+         { 
+             TrafficLightsStates = JsonUtility.FromJson<TrafficLights>(www.downloadHandler.text);
+
+             hold = false;
+         }
+     }
+     
 
      void MoveCarAgents()
      {
@@ -160,6 +189,29 @@ public class CarAgentController : MonoBehaviour
                  
              Vector3 dir = oldPos[i] - newPos[i];
              carAgents[i].transform.rotation = Quaternion.LookRotation(dir);
+         }
+     }
+
+     void ChangeTrafficLightColor()
+     {
+         for (int i = 0; i < trafficLights.Count; i++)
+         {
+             Material material = trafficLights[i].GetComponentInChildren<Renderer>().material;
+             bool state = TrafficLightsStates.states[i];
+
+             if (i == 22 || i == 23)
+             {
+                 state = !state;
+             }
+             
+             if (!state)
+             {
+                 material.color = Color.green;
+             }
+             else
+             {
+                 material.color = Color.red;
+             }
          }
      }
 }
