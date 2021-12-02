@@ -187,6 +187,7 @@ public class AgentController : MonoBehaviour
 
     void MoveOrganizingAgents()
     {
+        Debug.Log(oldPosOrg[0] + " Size Test");
         for (int i = 0; i < numAgents; i++)
         {
             Vector3 interpolated = Vector3.Lerp(oldPosOrg[i], newPosOrg[i], dt);

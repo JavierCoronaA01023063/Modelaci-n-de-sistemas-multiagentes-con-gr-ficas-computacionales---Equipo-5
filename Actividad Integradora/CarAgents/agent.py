@@ -21,8 +21,6 @@ def h(p1, p2):
 
 
 def algorithm(self, start, goal, h):
-    print(goal, "Goal")
-    print(start, "Start")
     # The set of discovered nodes that may need to be (re-)expanded.
     # Initially, only the start node is known.
     # This is usually implemented as a min-heap or priority queue rather than a hash-set.
@@ -120,7 +118,6 @@ class Car(Agent):
         self.leftIndexes = []
         self.rightIndexes = []
         self.path = algorithm(self, startPos, destination, h)
-        print(self.path, "Path")
 
     def getCarDirections(self, pos):
         self.upIndexes = []
