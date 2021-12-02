@@ -45,7 +45,7 @@ def updatePosition():
     global carModel
     if request.method == 'GET':
         carAgents = sortAgents()
-        cars_positions = [{"x": a.pos[0], "y": 0, "z": a.pos[1]}
+        cars_positions = [{"x": a.pos[0], "y": 0.02, "z": a.pos[1]}
                           for (a) in carAgents]
         return jsonify({"positions": cars_positions})
 

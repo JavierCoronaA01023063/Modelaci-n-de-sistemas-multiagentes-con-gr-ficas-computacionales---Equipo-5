@@ -26,8 +26,7 @@ public class AgentController : MonoBehaviour
 
     Agents oAgents, bAgents;
     GameObject[] organizingAgents, boxAgents;
-    private float updateTime = 0;
-    
+
     List<Vector3> oldPosOrg;
     List<Vector3> newPosOrg;
     List<Vector3> oldPosBox;

@@ -333,6 +333,7 @@ MonoBehaviour:
   buildingPrefab: {fileID: 33555395739272859, guid: bee609c503c218a44ae8ff9b02ad7f86, type: 3}
   semaphorePrefab: {fileID: 6024789630331224507, guid: 3bbe615d5e2438840a2fbfab5601b2ac, type: 3}
   tileSize: 1
+  trafficLights: []
 --- !u!4 &1457529884
 Transform:
   m_ObjectHideFlags: 0
@@ -437,14 +438,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5baadb0c75441044aa2117eb4d07336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: http://127.0.0.1:5000
+  url: https://retomovilidadurbana-nice-koala-fu.mybluemix.net
   testEP: /
   configEP: /config
   updateEP: /updateModel
   updateCarAgentsEP: /updatePosition
+  updateTrafficLightsEP: /getTrafficLights
   numAgents: 10
   carAgentPrefab: {fileID: 1285852979434094250, guid: 019242f595e9b674c825d91c7b1ab924, type: 3}
-  trafficLightAgentPrefab: {fileID: 6024789630331224507, guid: 3bbe615d5e2438840a2fbfab5601b2ac, type: 3}
   timeToUpdate: 1
 --- !u!4 &1713419597
 Transform:

@@ -55,7 +55,7 @@ public class CarAgentController : MonoBehaviour
          
          for (int i = 0; i < numAgents; i++)
          {
-             carAgents[i] = Instantiate(carAgentPrefab, Vector3.zero, Quaternion.Euler(new Vector3(-90, 0, -90)));
+             carAgents[i] = Instantiate(carAgentPrefab, new Vector3(0, 0.02f, 0), Quaternion.Euler(-90, 0, 0));
          }
          
          StartCoroutine(SendConfig()); 
@@ -135,6 +135,7 @@ public class CarAgentController : MonoBehaviour
          {
              StartCoroutine(GetCarData());
              StartCoroutine(GetTrafficLightState());
+             hold = false;
          }
      }
 
@@ -159,8 +160,6 @@ public class CarAgentController : MonoBehaviour
              {
                  oldPos = new List<Vector3>(newPos);
              }
-             
-             hold = false;
          }
      }
      
@@ -174,8 +173,6 @@ public class CarAgentController : MonoBehaviour
          else 
          { 
              TrafficLightsStates = JsonUtility.FromJson<TrafficLights>(www.downloadHandler.text);
-
-             hold = false;
          }
      }
      
@@ -187,8 +184,9 @@ public class CarAgentController : MonoBehaviour
              Vector3 interpolated = Vector3.Lerp(oldPos[i], newPos[i], dt);
              carAgents[i].transform.localPosition = interpolated;
                  
-             Vector3 dir = oldPos[i] - newPos[i];
-             carAgents[i].transform.rotation = Quaternion.LookRotation(dir);
+             // Vector3 dir = oldPos[i] - newPos[i];
+             //
+             // carAgents[i].transform.LookAt(dir, Vector3.up);
          }
      }
 
@@ -197,6 +195,7 @@ public class CarAgentController : MonoBehaviour
          for (int i = 0; i < trafficLights.Count; i++)
          {
              Material material = trafficLights[i].GetComponentInChildren<Renderer>().material;
+             
              bool state = TrafficLightsStates.states[i];
 
              if (i == 22 || i == 23)
